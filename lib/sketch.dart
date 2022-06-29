@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:handwriting/line_param.dart';
 
-import 'providers/line_provider.dart';
 import 'sketcher.dart';
 
-class SketchPage extends StatelessWidget {
-  const SketchPage({Key? key}) : super(key: key);
+class SketchCanvas extends StatelessWidget {
+  final List<DrawnLine> lines;
+  final Function addNewLine;
+  final Function addToCurrentLine;
+
+  const SketchCanvas({
+    Key? key,
+    required this.lines,
+    required this.addNewLine,
+    required this.addToCurrentLine,
+  }) : super(key: key);
 
   void _handlePanStart(DragStartDetails details, BuildContext context) {
     // get point of touch
@@ -13,7 +21,7 @@ class SketchPage extends StatelessWidget {
     final point = box.globalToLocal(details.localPosition);
 
     // add new line
-    context.read<Lines>().newLine(point);
+    addNewLine(point);
   }
 
   void _handlePanUpdate(DragUpdateDetails details, BuildContext context) {
@@ -22,7 +30,7 @@ class SketchPage extends StatelessWidget {
     final point = box.globalToLocal(details.localPosition);
 
     // add point to current line
-    context.read<Lines>().addPointToCurrentLine(point);
+    addToCurrentLine(point);
   }
 
   void _handlePanEnd(DragEndDetails details, BuildContext context) {
@@ -45,7 +53,7 @@ class SketchPage extends StatelessWidget {
         color: Colors.transparent,
 
         child: CustomPaint(
-          painter: Sketcher(lines: context.read<Lines>().points),
+          painter: Sketcher(lines: lines),
         ),
       ),
     );
