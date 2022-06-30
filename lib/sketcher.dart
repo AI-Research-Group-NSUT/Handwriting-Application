@@ -15,6 +15,13 @@ class Sketcher extends CustomPainter {
       ..strokeWidth = 5.0;
 
     for (int i = 0; i < lines.length; ++i) {
+      // if current line.length < 6 make a circle
+      if (lines[i].path.length < 6) {
+        paint.color = lines[i].color;
+        paint.strokeWidth = lines[i].width;
+        canvas.drawCircle(lines[i].path.first, 3, paint);
+      }
+
       for (int j = 0; j < lines[i].path.length - 1; ++j) {
         paint.color = lines[i].color;
         paint.strokeWidth = lines[i].width;

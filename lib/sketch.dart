@@ -50,7 +50,7 @@ class SketchCanvas extends StatelessWidget {
         // set to device width and height
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Colors.transparent,
+        color: Colors.white,
 
         child: CustomPaint(
           painter: Sketcher(lines: lines),
