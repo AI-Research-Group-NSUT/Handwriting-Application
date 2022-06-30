@@ -11,17 +11,17 @@ class CharacterLogic {
   Char get currentCharacter => _characters[i];
 
   void next() {
-    i++;
-    if (i >= _characters.length) {
-      i = 0;
+    if (i + 1 >= _characters.length) {
+      return;
     }
+    i++;
   }
 
   void previous() {
-    i--;
-    if (i < 0) {
-      i = _characters.length - 1;
+    if (i <= 0) {
+      return;
     }
+    i--;
   }
 
   void clear() {
@@ -30,6 +30,10 @@ class CharacterLogic {
 
   void setStroke(List<DrawnLine> lineParam) {
     _characters[i].setStroke(lineParam);
+  }
+
+  bool isNextPresent() {
+    return i + 1 < _characters.length;
   }
 }
 

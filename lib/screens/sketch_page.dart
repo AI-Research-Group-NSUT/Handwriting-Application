@@ -84,58 +84,81 @@ class _SketchPageState extends State<SketchPage> {
                 ),
                 onPressed: () {
                   setState(() {
+                    // save stroke to current stroke
+                    characterLogic.setStroke(logic.lines);
                     characterLogic.previous();
-                    characterLogic.currentCharacter.clearStroke();
+                    logic.setStroke(characterLogic.currentCharacter.stroke);
                   });
                 },
               ),
-              TextButton(
-                child: const Text(
-                  'Next',
-                  style: TextStyle(fontSize: 20, color: Colors.blue),
-                ),
-                onPressed: () {
-                  setState(() {
-                    characterLogic.currentCharacter.setStroke(logic.lines);
-                    logic.clear();
-                    characterLogic.next();
-                  });
-                },
-              ),
+              if (characterLogic.isNextPresent())
+                TextButton(
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(fontSize: 20, color: Colors.blue),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      characterLogic.currentCharacter.setStroke(logic.lines);
+                      logic.clear();
+                      characterLogic.next();
+                      logic.setStroke(characterLogic.currentCharacter.stroke);
+                    });
+                  },
+                )
+              else
+                TextButton(
+                  child: const Text(
+                    'Done',
+                    style: TextStyle(fontSize: 20, color: Colors.blue),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      // save the stroke
+                      characterLogic.currentCharacter.setStroke(logic.lines);
+
+                      //TODO _handleDone();
+                    });
+                  },
+                )
             ],
           ),
         ),
         Positioned(
           right: 16,
           top: 16,
-          width: 40,
+          height: 40,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
-              color: Colors.blue.shade200,
+              color: Colors.blue,
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children:
                     characterLogic.characters.map<Widget>((Char character) {
                   if (character.stroke.isEmpty) {
-                    return const Text(
-                      '.',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        decoration: TextDecoration.none,
+                    return Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Icon(
+                        Icons.circle,
+                        color: (characterLogic.currentCharacter.char ==
+                                character.char)
+                            ? Colors.yellow.shade800
+                            : Colors.white,
+                        size: 10,
                       ),
                     );
                   }
-                  return const Padding(
-                    padding: EdgeInsets.all(1.0),
+                  return Padding(
+                    padding: const EdgeInsets.all(1.0),
                     child: Icon(
-                      Icons.check,
-                      color: Colors.green,
-                      size: 15,
+                      Icons.circle,
+                      color: Colors.green.shade400,
+                      size: 10,
                     ),
                   );
                 }).toList(),

@@ -18,6 +18,11 @@ class SketchPageLogic {
     _lines.clear();
   }
 
+  void setStroke(List<DrawnLine> value) {
+    _lines.clear();
+    _lines.addAll(value);
+  }
+
   List<DrawnLine> get lines => _lines;
 
   void undo() {
@@ -26,8 +31,8 @@ class SketchPageLogic {
     }
   }
 
-  List<List<double>> linesToPath() {
-    final path = _lines.map((line) => line.path).toList();
+  static List<List<double>> linesToPath(List<DrawnLine> lines) {
+    final path = lines.map((line) => line.path).toList();
 
     List<List<double>> updatedPath = [];
 
@@ -38,8 +43,6 @@ class SketchPageLogic {
       }
       updatedPath.add([-1, -1]);
     }
-
-    // copy path to clipboard
     return updatedPath;
   }
 }
