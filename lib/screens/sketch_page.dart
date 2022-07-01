@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:handwriting/logic/character_logic.dart';
+import 'package:handwriting/logic/post_logic.dart';
 import 'package:handwriting/logic/sketch_page_logic.dart';
 import 'package:handwriting/sketch.dart';
 
@@ -13,6 +14,7 @@ class SketchPage extends StatefulWidget {
 class _SketchPageState extends State<SketchPage> {
   final logic = SketchPageLogic();
   final characterLogic = CharacterLogic();
+  final httpPostLogic = HTTPPostLogic();
 
   void _addNewLine(Offset point) {
     setState(() {
@@ -112,12 +114,22 @@ class _SketchPageState extends State<SketchPage> {
                     'Done',
                     style: TextStyle(fontSize: 20, color: Colors.blue),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {
                       // save the stroke
                       characterLogic.currentCharacter.setStroke(logic.lines);
 
-                      //TODO _handleDone();
+                      final strokes = characterLogic.allStrokes();
+                      final screenHeight = MediaQuery.of(context).size.height;
+                      final screenWidth = MediaQuery.of(context).size.width;
+
+                      final reqObj = {
+                        'strokes': strokes,
+                        'screenHeight': screenHeight,
+                        'screenWidth': screenWidth,
+                      };
+
+                      httpPostLogic.postData(reqObj);
                     });
                   },
                 )
@@ -192,3 +204,14 @@ class _SketchPageState extends State<SketchPage> {
     );
   }
 }
+
+
+// dimesion
+// json {
+//  height: 
+//  width:
+//  strokes {
+//    'ka': String 
+// 
+// }
+// }

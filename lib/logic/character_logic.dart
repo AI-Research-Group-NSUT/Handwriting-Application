@@ -1,4 +1,5 @@
 import 'package:handwriting/line_param.dart';
+import 'package:handwriting/logic/sketch_page_logic.dart';
 
 import '../assets/devanagri.dart';
 
@@ -34,6 +35,17 @@ class CharacterLogic {
 
   bool isNextPresent() {
     return i + 1 < _characters.length;
+  }
+
+  Map<String, List<List<double>>> allStrokes() {
+    final charAndStroke = <String, List<List<double>>>{};
+
+    for (int i = 0; i < _characters.length; ++i) {
+      charAndStroke[_characters[i].char] =
+          SketchPageLogic.linesToPath(_characters[i].stroke);
+    }
+
+    return charAndStroke;
   }
 }
 
