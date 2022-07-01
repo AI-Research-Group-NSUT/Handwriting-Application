@@ -118,19 +118,32 @@ class _SketchPageState extends State<SketchPage> {
                     setState(() {
                       // save the stroke
                       characterLogic.currentCharacter.setStroke(logic.lines);
-
-                      final strokes = characterLogic.allStrokes();
-                      final screenHeight = MediaQuery.of(context).size.height;
-                      final screenWidth = MediaQuery.of(context).size.width;
-
-                      final reqObj = {
-                        'strokes': strokes,
-                        'screenHeight': screenHeight,
-                        'screenWidth': screenWidth,
-                      };
-
-                      httpPostLogic.postData(reqObj);
                     });
+
+                    final req = characterLogic.reqObject(
+                      MediaQuery.of(context).size.height,
+                      MediaQuery.of(context).size.width,
+                    );
+
+                    final res = httpPostLogic.postData(req);
+
+                    setState(() {
+                      logic.clear();
+                      characterLogic.clearAll();
+                    });
+                    // if error then return
+
+                    res.onError((error, stackTrace) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Something went wrong :('),
+                        ),
+                      );
+
+                      return Future.value();
+                    });
+
+                    Navigator.of(context).pop();
                   },
                 )
             ],
@@ -205,13 +218,12 @@ class _SketchPageState extends State<SketchPage> {
   }
 }
 
-
 // dimesion
 // json {
-//  height: 
+//  height:
 //  width:
 //  strokes {
-//    'ka': String 
-// 
+//    'ka': String
+//
 // }
 // }

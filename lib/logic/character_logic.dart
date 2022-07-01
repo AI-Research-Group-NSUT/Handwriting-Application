@@ -29,6 +29,14 @@ class CharacterLogic {
     _characters[i].clearStroke();
   }
 
+  void clearAll() {
+    for (var e in _characters) {
+      e.clearStroke();
+    }
+
+    i = 0;
+  }
+
   void setStroke(List<DrawnLine> lineParam) {
     _characters[i].setStroke(lineParam);
   }
@@ -46,6 +54,18 @@ class CharacterLogic {
     }
 
     return charAndStroke;
+  }
+
+  Map<String, Object> reqObject(double screenHeight, double screenWidth) {
+    final strokes = allStrokes();
+
+    final reqObj = {
+      'strokes': strokes,
+      'screenHeight': screenHeight,
+      'screenWidth': screenWidth,
+    };
+
+    return reqObj;
   }
 }
 
