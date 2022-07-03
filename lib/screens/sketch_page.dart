@@ -225,7 +225,7 @@ class _SketchPageState extends State<SketchPage> {
             left: 16,
             child: Container(
               color: Colors.blue,
-              width: 55,
+              width: 100,
               height: 55,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
