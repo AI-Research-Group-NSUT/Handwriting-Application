@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:handwriting/logic/character_logic.dart';
+import 'package:handwriting/logic/get_logic.dart';
 import 'package:handwriting/logic/post_logic.dart';
 import 'package:handwriting/logic/sketch_page_logic.dart';
 import 'package:handwriting/sketch.dart';
@@ -15,6 +16,9 @@ class _SketchPageState extends State<SketchPage> {
   final logic = SketchPageLogic();
   final characterLogic = CharacterLogic();
   final httpPostLogic = HTTPPostLogic();
+
+  bool _argumentSet = false;
+
   bool isVisible = false;
   void _addNewLine(Offset point) {
     setState(() {
@@ -52,6 +56,7 @@ class _SketchPageState extends State<SketchPage> {
           isVisible = false;
           logic.clear();
           characterLogic.clear();
+          _argumentSet = false;
         });
         print('done');
       } else {
@@ -69,6 +74,13 @@ class _SketchPageState extends State<SketchPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_argumentSet) {
+      final args =
+          ModalRoute.of(context)?.settings.arguments as CharacterResponse;
+      characterLogic.setCharacters(args.data);
+      _argumentSet = true;
+    }
+
     return Scaffold(
       body: Stack(
         children: [

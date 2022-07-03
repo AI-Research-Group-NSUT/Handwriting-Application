@@ -11,6 +11,14 @@ class CharacterLogic {
 
   Char get currentCharacter => _characters[i];
 
+  setCharacters(List<dynamic> characters) {
+    _characters.clear();
+
+    for (var e in characters) {
+      _characters.add(Char(e));
+    }
+  }
+
   void next() {
     if (i + 1 >= _characters.length) {
       return;
@@ -70,7 +78,7 @@ class CharacterLogic {
 }
 
 class Char {
-  final String _char;
+  final dynamic _char;
   List<DrawnLine> stroke = <DrawnLine>[];
 
   Char(this._char);
