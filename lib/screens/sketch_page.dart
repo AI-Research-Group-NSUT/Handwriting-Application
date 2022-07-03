@@ -127,6 +127,13 @@ class _SketchPageState extends State<SketchPage> {
 
                     final res = httpPostLogic.postData(req);
 
+                    // while not done show spinning indicator
+
+                    res.whenComplete(() {
+                      Navigator.pop(context);
+                      print('done');
+                    });
+
                     setState(() {
                       logic.clear();
                       characterLogic.clearAll();
@@ -142,8 +149,6 @@ class _SketchPageState extends State<SketchPage> {
 
                       return Future.value();
                     });
-
-                    Navigator.of(context).pop();
                   },
                 )
             ],
@@ -217,13 +222,3 @@ class _SketchPageState extends State<SketchPage> {
     );
   }
 }
-
-// dimesion
-// json {
-//  height:
-//  width:
-//  strokes {
-//    'ka': String
-//
-// }
-// }
