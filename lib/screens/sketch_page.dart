@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:handwriting/logic/character_logic.dart';
 import 'package:handwriting/logic/post_logic.dart';
@@ -27,6 +25,45 @@ class _SketchPageState extends State<SketchPage> {
   void _addToCurrentLine(Offset point) {
     setState(() {
       logic.addToCurrentLine(point);
+    });
+  }
+
+  void _handleDone() {
+    setState(() {
+      // save the stroke
+      characterLogic.currentCharacter.setStroke(logic.lines);
+    });
+
+    final req = characterLogic.reqObject(
+      MediaQuery.of(context).size.height,
+      MediaQuery.of(context).size.width,
+    );
+    // while not done show spinning indicator
+    setState(() {
+      isVisible = true;
+    });
+
+    final res = httpPostLogic.postData(req);
+
+    res.then((wasSuccessful) {
+      if (wasSuccessful) {
+        Navigator.pop(context);
+        setState(() {
+          isVisible = false;
+          logic.clear();
+          characterLogic.clear();
+        });
+        print('done');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Something went wrong :('),
+          ),
+        );
+        setState(() {
+          isVisible = false;
+        });
+      }
     });
   }
 
@@ -113,55 +150,11 @@ class _SketchPageState extends State<SketchPage> {
                   )
                 else
                   TextButton(
+                    onPressed: _handleDone,
                     child: const Text(
                       'Done',
                       style: TextStyle(fontSize: 20, color: Colors.blue),
                     ),
-                    onPressed: () async {
-                      setState(() {
-                        // save the stroke
-                        characterLogic.currentCharacter.setStroke(logic.lines);
-                      });
-
-                      final req = characterLogic.reqObject(
-                        MediaQuery.of(context).size.height,
-                        MediaQuery.of(context).size.width,
-                      );
-                      // while not done show spinning indicator
-                      setState(() {
-                        isVisible = true;
-                      });
-                      httpPostLogic.postData(req).then((res) {
-                        final Map parsed = json.decode(res.body);
-                        if (res.statusCode == 200 && parsed['success']) {
-                          Navigator.pop(context);
-                          setState(() {
-                            isVisible = false;
-                            logic.clear();
-                            characterLogic.clear();
-                          });
-                          print('done');
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Something went wrong :('),
-                            ),
-                          );
-                          setState(() {
-                            isVisible = false;
-                          });
-                        }
-                      }).catchError((error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Something went wrong :('),
-                          ),
-                        );
-                        setState(() {
-                          isVisible = false;
-                        });
-                      });
-                    },
                   )
               ],
             ),
@@ -170,7 +163,7 @@ class _SketchPageState extends State<SketchPage> {
             alignment: Alignment.center,
             child: Visibility(
               visible: isVisible,
-              child: CircularProgressIndicator(color: Colors.blue),
+              child: const CircularProgressIndicator(color: Colors.blue),
             ),
           ),
           Positioned(
