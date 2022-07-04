@@ -17,7 +17,10 @@ class _SketchPageState extends State<SketchPage> {
   final characterLogic = CharacterLogic();
   final httpPostLogic = HTTPPostLogic();
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool _argumentSet = false;
+  int _index = -1;
 
   bool isVisible = false;
   void _addNewLine(Offset point) {
@@ -38,10 +41,8 @@ class _SketchPageState extends State<SketchPage> {
       characterLogic.currentCharacter.setStroke(logic.lines);
     });
 
-    final req = characterLogic.reqObject(
-      MediaQuery.of(context).size.height,
-      MediaQuery.of(context).size.width,
-    );
+    final req = characterLogic.reqObject(MediaQuery.of(context).size.height,
+        MediaQuery.of(context).size.width, _index);
     // while not done show spinning indicator
     setState(() {
       isVisible = true;
@@ -72,16 +73,63 @@ class _SketchPageState extends State<SketchPage> {
     });
   }
 
+  void _openDrawer() {
+    _scaffoldKey.currentState?.openEndDrawer();
+  }
+
+  @override
+  void initState() {
+    _scaffoldKey.currentState?.openEndDrawer();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_argumentSet) {
       final args =
           ModalRoute.of(context)?.settings.arguments as CharacterResponse;
       characterLogic.setCharacters(args.data);
+      _index = args.index;
       _argumentSet = true;
     }
 
     return Scaffold(
+      key: _scaffoldKey,
+
+      // app drawer
+      endDrawer: Drawer(
+        width: 100,
+        backgroundColor: Colors.white,
+        child: ListView(
+          children: characterLogic.characters
+              .map<Widget>((character) => GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        characterLogic.setStroke(logic.lines);
+                        characterLogic.setCurrentCharacter(character);
+                        logic.setStroke(characterLogic.currentCharacter.stroke);
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 100,
+                      color: characterLogic.currentCharColor(character),
+                      child: Center(
+                        child: Text(
+                          character.char,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ))
+              .toList(),
+        ),
+      ),
       body: Stack(
         children: [
           SketchCanvas(
@@ -182,40 +230,30 @@ class _SketchPageState extends State<SketchPage> {
             right: 16,
             top: 16,
             height: 40,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.blue,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children:
-                      characterLogic.characters.map<Widget>((Char character) {
-                    if (character.stroke.isEmpty) {
+            child: GestureDetector(
+              onTap: _openDrawer,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.blue,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children:
+                        characterLogic.characters.map<Widget>((Char character) {
                       return Padding(
                         padding: const EdgeInsets.all(1.0),
                         child: Icon(
                           Icons.circle,
-                          color: (characterLogic.currentCharacter.char ==
-                                  character.char)
-                              ? Colors.yellow.shade800
-                              : Colors.white,
+                          color: characterLogic.currentCharColor(character),
                           size: 10,
                         ),
                       );
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Icon(
-                        Icons.circle,
-                        color: Colors.green.shade400,
-                        size: 10,
-                      ),
-                    );
-                  }).toList(),
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
