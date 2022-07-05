@@ -41,6 +41,23 @@ class _SketchPageState extends State<SketchPage> {
       characterLogic.currentCharacter.setStroke(logic.lines);
     });
 
+    if (characterLogic.emptyFromStart() != -1) {
+      setState(() {
+        characterLogic.setStroke(logic.lines);
+
+        characterLogic.setCurrentCharacter(
+          characterLogic.characters[characterLogic.emptyFromStart()],
+        );
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please draw all the characters'),
+        ),
+      );
+      return;
+    }
+
     final req = characterLogic.reqObject(MediaQuery.of(context).size.height,
         MediaQuery.of(context).size.width, _index);
     // while not done show spinning indicator
@@ -179,10 +196,10 @@ class _SketchPageState extends State<SketchPage> {
             right: 16,
             child: Row(
               children: [
-                TextButton(
+                ElevatedButton(
                   child: const Text(
                     'Previous',
-                    style: TextStyle(fontSize: 20, color: Colors.blue),
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   onPressed: () {
                     setState(() {
@@ -193,11 +210,14 @@ class _SketchPageState extends State<SketchPage> {
                     });
                   },
                 ),
+                const SizedBox(
+                  width: 16,
+                ),
                 if (characterLogic.isNextPresent())
-                  TextButton(
+                  ElevatedButton(
                     child: const Text(
                       'Next',
-                      style: TextStyle(fontSize: 20, color: Colors.blue),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                     onPressed: () {
                       setState(() {
@@ -209,11 +229,11 @@ class _SketchPageState extends State<SketchPage> {
                     },
                   )
                 else
-                  TextButton(
+                  ElevatedButton(
                     onPressed: _handleDone,
                     child: const Text(
                       'Done',
-                      style: TextStyle(fontSize: 20, color: Colors.blue),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   )
               ],

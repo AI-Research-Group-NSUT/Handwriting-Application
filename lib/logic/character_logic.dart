@@ -69,6 +69,16 @@ class CharacterLogic {
     _characters[i].setStroke(lineParam);
   }
 
+  int emptyFromStart() {
+    for (int i = 0; i < _characters.length; i++) {
+      if (_characters[i].stroke.isEmpty) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
   bool isNextPresent() {
     return i + 1 < _characters.length;
   }
