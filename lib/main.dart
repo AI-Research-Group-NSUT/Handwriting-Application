@@ -4,12 +4,14 @@ import 'package:handwriting/screens/sketch_page.dart';
 
 import 'screens/home_page.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
-      .then((_) {
-    runApp(const MyHomePage());
-  });
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.landscapeLeft]);
+
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
+  runApp(const MyHomePage());
 }
 
 class MyHomePage extends StatelessWidget {

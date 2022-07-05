@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:handwriting/logic/character_logic.dart';
 import 'package:handwriting/logic/get_logic.dart';
 import 'package:handwriting/logic/post_logic.dart';
 import 'package:handwriting/logic/sketch_page_logic.dart';
 import 'package:handwriting/sketch.dart';
+import 'package:handwriting/utils/platform_function.dart';
 
 class SketchPage extends StatefulWidget {
   const SketchPage({Key? key}) : super(key: key);
@@ -20,9 +22,11 @@ class _SketchPageState extends State<SketchPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _argumentSet = false;
+
   int _index = -1;
 
   bool isVisible = false;
+
   void _addNewLine(Offset point) {
     setState(() {
       logic.addNewLine(point);
@@ -50,11 +54,23 @@ class _SketchPageState extends State<SketchPage> {
         );
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please draw all the characters'),
-        ),
-      );
+      runFunction(() {
+        Fluttertoast.showToast(
+            msg: "Please draw all the characters",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.yellow.shade900,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }, () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please draw all the characters'),
+          ),
+        );
+      });
+
       return;
     }
 
@@ -74,15 +90,43 @@ class _SketchPageState extends State<SketchPage> {
           isVisible = false;
           logic.clear();
           characterLogic.clear();
-          _argumentSet = false;
         });
-        print('done');
+
+        runFunction(() {
+          Fluttertoast.showToast(
+              msg: "Successfully Posted",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }, () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Successfully Posted'),
+            ),
+          );
+        });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Something went wrong :('),
-          ),
-        );
+        // add a toast
+        runFunction(() {
+          Fluttertoast.showToast(
+              msg: "Something went wrong :(",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }, () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Something went wrong :('),
+            ),
+          );
+        });
+
         setState(() {
           isVisible = false;
         });
@@ -97,7 +141,6 @@ class _SketchPageState extends State<SketchPage> {
   @override
   void initState() {
     _scaffoldKey.currentState?.openEndDrawer();
-
     super.initState();
   }
 
@@ -197,9 +240,12 @@ class _SketchPageState extends State<SketchPage> {
             child: Row(
               children: [
                 ElevatedButton(
-                  child: const Text(
-                    'Previous',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Previous',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
                   ),
                   onPressed: () {
                     setState(() {
@@ -215,9 +261,12 @@ class _SketchPageState extends State<SketchPage> {
                 ),
                 if (characterLogic.isNextPresent())
                   ElevatedButton(
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Next',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
                     ),
                     onPressed: () {
                       setState(() {
@@ -231,9 +280,12 @@ class _SketchPageState extends State<SketchPage> {
                 else
                   ElevatedButton(
                     onPressed: _handleDone,
-                    child: const Text(
-                      'Done',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Done',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
                     ),
                   )
               ],

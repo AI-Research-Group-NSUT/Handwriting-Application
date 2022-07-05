@@ -14,8 +14,6 @@ class HTTPPostLogic {
       body: jsonEncode(reqObject),
     );
 
-    print(res.body);
-
     if (res.statusCode == 200 && json.decode(res.body)['success']) {
       return true;
     } else {
