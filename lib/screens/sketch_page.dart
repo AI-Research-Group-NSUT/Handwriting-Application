@@ -40,6 +40,8 @@ class _SketchPageState extends State<SketchPage> {
   }
 
   void _handleDone() {
+    logic.disable();
+
     setState(() {
       // save the stroke
       characterLogic.currentCharacter.setStroke(logic.lines);
@@ -72,6 +74,8 @@ class _SketchPageState extends State<SketchPage> {
           ),
         );
       });
+
+      logic.enable();
 
       return;
     }
@@ -128,6 +132,8 @@ class _SketchPageState extends State<SketchPage> {
             ),
           );
         });
+
+        logic.enable();
 
         setState(() {
           isVisible = false;
