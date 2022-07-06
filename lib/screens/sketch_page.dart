@@ -52,6 +52,8 @@ class _SketchPageState extends State<SketchPage> {
         characterLogic.setCurrentCharacter(
           characterLogic.characters[characterLogic.emptyFromStart()],
         );
+
+        logic.clear();
       });
 
       runFunction(() {
