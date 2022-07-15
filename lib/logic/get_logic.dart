@@ -6,19 +6,27 @@ class HTTPGetLogic {
   final String url = 'https://handwritingdata.herokuapp.com/get';
 
   Future<CharacterResponse?> getData() async {
-    final res = await http.get(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
+    try {
+      final res = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
 
-    if (res.statusCode == 200) {
-      final data = json.decode(res.body);
-      final characterData = CharacterResponse.fromJson(data);
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+        final characterData = CharacterResponse.fromJson(data);
 
-      return Future.value(characterData);
-    } else {
+        return Future.value(characterData);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error');
       return null;
     }
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:handwriting/screens/sketch_page.dart';
@@ -5,11 +6,14 @@ import 'package:handwriting/screens/sketch_page.dart';
 import 'screens/home_page.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.landscapeLeft]);
+  if (!kIsWeb) {
+    WidgetsFlutterBinding.ensureInitialized();
+    await SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft]);
 
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: []);
+  }
 
   runApp(const MyHomePage());
 }
